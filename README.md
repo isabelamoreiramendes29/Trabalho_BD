@@ -38,8 +38,7 @@ aula, sem precisar forçar nenhum deles:
 | `cliente` | Quem compra |
 | `venda` | A transação realizada |
 
-Mais as tabelas intermediárias `item_venda` e `composicao`, criadas pelos
-relacionamentos N:M.
+Mais as tabelas intermediárias criadas pelos relacionamentos N:M.
 
 ## Os relacionamentos
 
@@ -48,10 +47,9 @@ relacionamentos N:M.
 Cada farmacêutico tem um único registro no CRF, e cada registro pertence a um
 único farmacêutico.
 
-A tabela `registro_crf` **não tem `id` próprio**: a coluna `farmaceutico_id` é
-chave primária e chave estrangeira ao mesmo tempo. Sendo chave primária ela não
-pode se repetir, e é isso que impede um farmacêutico de ter dois registros — o
-banco garante a regra sozinho, sem precisar de verificação externa.
+A tabela `registro_crf` **não tem `id` próprio**: ela é identificada pelo
+`farmaceutico_id`, que é a chave primária. Como chave primária não se repete,
+é isso que impede um farmacêutico de ter dois registros.
 
 A separação em duas tabelas segue o critério visto em aula: os dados de emprego
 (admissão, turno) e os dados da licença profissional (número, validade, estado
@@ -72,18 +70,19 @@ O modelo tem outros relacionamentos 1:N: `medicamento` → `lote`,
 O modelo relacional não representa N:M diretamente, então cada um desses
 relacionamentos gera uma tabela intermediária:
 
-- **`item_venda`** — uma venda leva vários medicamentos, e um medicamento é
-  vendido em várias vendas diferentes.
-- **`composicao`** — um medicamento tem vários princípios ativos, e um princípio
-  ativo entra na fórmula de vários medicamentos.
+- **`venda_has_medicamento`** — uma venda leva vários medicamentos, e um
+  medicamento é vendido em várias vendas diferentes.
+- **`medicamento_has_principio_ativo`** — um medicamento tem vários princípios
+  ativos, e um princípio ativo entra na fórmula de vários medicamentos.
 
-As duas recebem nomes próprios, e não o nome genérico que a ferramenta sugere a
-partir das tabelas de origem.
+O modelo tem ainda a tabela `medicamento_has_cliente`, que liga os clientes aos
+medicamentos que costumam comprar.
 
 ### Auto-relacionamento — `medicamento` → `medicamento`
 
-O campo `medicamento_referencia_id` aponta para a própria tabela `medicamento`:
-é assim que o genérico se liga ao medicamento de referência.
+O campo `medicamento_referencia_id`, na própria tabela `medicamento`, guarda a
+referência de um medicamento para outro: é assim que o genérico se liga ao
+medicamento de referência.
 
 Ele é o **único campo do modelo que aceita NULL**, e isso é proposital — um
 medicamento de referência não é genérico de ninguém, então ali a ausência de
